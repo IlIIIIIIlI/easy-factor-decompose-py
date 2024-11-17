@@ -119,7 +119,7 @@ def create_bloomberg_style_chart(df, contributions, target_col):
     )
 
     # Add stacked area chart for cumulative contributions
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+    colors = plt.cm.tab20(np.linspace(0, 1, len(contributions.columns))).tolist()
     for col, color in zip(contributions.columns, colors):
         fig.add_trace(
             go.Scatter(
@@ -210,10 +210,11 @@ def create_bloomberg_bar_chart(df, contributions, target_col, start_date, end_da
     )
 
     # Colors matching Bloomberg's style
-    colors = ['#4DAF4A',  # Green for Monetary Policy
-             '#377EB8',   # Blue for Macro Shocks
-             '#FF7F00',   # Orange for US Policy
-             '#E41A1C']   # Red for Global Risk
+    # colors = ['#4DAF4A',  # Green for Monetary Policy
+    #          '#377EB8',   # Blue for Macro Shocks
+    #          '#FF7F00',   # Orange for US Policy
+    #          '#E41A1C']   # Red for Global Risk
+    colors = plt.cm.tab20(np.linspace(0, 1, len(contributions.columns))).tolist()
 
     # Add stacked bar chart for contributions (filtered data)
     for idx, (col, color) in enumerate(zip(contributions.columns, colors)):
@@ -420,9 +421,12 @@ def main():
                     )
                     
                     # Select factor columns
-                    st.write('选择四个分解因子:')
+                    max_factors = len([col for col in df.columns[1:] if col != target_col])
+                    n_factors = st.slider('选择因子数量', min_value=1, max_value=max_factors, value=min(4, max_factors))
+                    # 动态选择因子
+                    st.write('选择分解因子:')
                     factor_cols = []
-                    for i in range(4):
+                    for i in range(n_factors):
                         factor = st.selectbox(
                             f'因子 {i+1}',
                             [col for col in df.columns[1:] if col not in factor_cols and col != target_col],
@@ -430,7 +434,7 @@ def main():
                         )
                         factor_cols.append(factor)
                 
-                if len(set(factor_cols)) == 4:
+                if len(set(factor_cols)) == n_factors:
                     try:
                         # # Show correlation analysis
                         # st.subheader('相关性分析')
