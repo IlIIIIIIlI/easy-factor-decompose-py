@@ -119,7 +119,10 @@ def create_bloomberg_style_chart(df, contributions, target_col):
     )
 
     # Add stacked area chart for cumulative contributions
-    colors = plt.cm.tab20(np.linspace(0, 1, len(contributions.columns))).tolist()
+    # Add stacked area chart for cumulative contributions
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', 
+              '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+              '#bcbd22', '#17becf']  # 10个颜色
     for col, color in zip(contributions.columns, colors):
         fig.add_trace(
             go.Scatter(
@@ -214,7 +217,11 @@ def create_bloomberg_bar_chart(df, contributions, target_col, start_date, end_da
     #          '#377EB8',   # Blue for Macro Shocks
     #          '#FF7F00',   # Orange for US Policy
     #          '#E41A1C']   # Red for Global Risk
-    colors = plt.cm.tab20(np.linspace(0, 1, len(contributions.columns))).tolist()
+    # colors = plt.cm.tab20(np.linspace(0, 1, len(contributions.columns))).tolist()
+    # Colors matching Bloomberg's style
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', 
+              '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+              '#bcbd22', '#17becf']  # 10个颜色
 
     # Add stacked bar chart for contributions (filtered data)
     for idx, (col, color) in enumerate(zip(contributions.columns, colors)):
@@ -421,7 +428,7 @@ def main():
                     )
                     
                     # Select factor columns
-                    max_factors = len([col for col in df.columns[1:] if col != target_col])
+                    max_factors = min(10, len([col for col in df.columns[1:] if col != target_col]))
                     n_factors = st.slider('选择因子数量', min_value=1, max_value=max_factors, value=min(4, max_factors))
                     # 动态选择因子
                     st.write('选择分解因子:')
